@@ -39,7 +39,12 @@ namespace SpriteMaker
 
         private void Generate_Click(object sender, EventArgs e)
         {
-            if(radioButton1.Checked)
+            GenerateSprites();
+        }
+
+        private void GenerateSprites()
+        {
+            if (radioButton1.Checked)
             {
                 //Anti-clockwise
                 sprites = SpriteLib.RotateImageAnti_clockwise(pictureBox1.Image, int.Parse(textBox1.Text));
@@ -107,6 +112,9 @@ namespace SpriteMaker
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (image == null)
+                return;
+
             while(workingDirectory == null)
             {
                 MessageBox.Show("Please select an output directory");
@@ -115,6 +123,9 @@ namespace SpriteMaker
                     workingDirectory = folderBrowserDialog.SelectedPath;
                 }
             }
+
+            if (sprites == null)
+                GenerateSprites();
 
             int i = 0;
             foreach (var sprite in sprites)

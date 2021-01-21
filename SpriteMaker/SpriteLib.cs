@@ -1,18 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpriteMaker
 {
     public class SpriteLib
     {
-		private static Bitmap rotateImage(Bitmap b, float angle)
+		public static Color GetMostCommon(Bitmap bmp)
 		{
-			int num = (int)Math.Sqrt(b.Width * b.Width + b.Height * b.Height);
+			List<Color> colors = new List<Color>();
+
+			//List all pixel colours
+			for (int x = 0; x < bmp.Width; x++)
+			{
+				for (int y = 0; y < bmp.Height; y++)
+				{
+					colors.Add(bmp.GetPixel(x, y));
+				}
+			}
+
+			//Return most occuring colour
+			return colors.GroupBy(i => i).OrderByDescending(grp => grp.Count()).Select(grp => grp.Key).First();
+		}
+
+		private static Bitmap RotateImage(Bitmap b, float angle)
+		{
 			Bitmap bitmap = new Bitmap(b.Width, b.Height);
 			Graphics graphics = Graphics.FromImage(bitmap);
 			graphics.TranslateTransform((float)b.Width / 2f, (float)b.Height / 2f);
@@ -30,7 +43,7 @@ namespace SpriteMaker
 
 			for (int i = 0; i < imNum; i++)
 			{
-				Image spriteImage = rotateImage(bitmap, num);
+				Image spriteImage = RotateImage(bitmap, num);
 				num += dispFac;
 				yield return spriteImage;
 			}
@@ -43,10 +56,12 @@ namespace SpriteMaker
 			float dispFac = 360 / imNum;
 			for (int i = 0; i < imNum; i++)
 			{
-				Image spriteImage = rotateImage(bitmap, num);
+				Image spriteImage = RotateImage(bitmap, num);
 				num -= dispFac;
 				yield return spriteImage;
 			}
 		}
+
+
 	}
 }
